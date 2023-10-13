@@ -1,0 +1,357 @@
+<html>
+    <head>
+        <script src=
+"https://www.gstatic.com/firebasejs/3.7.4/firebase.js">
+    </script>
+        <script src="https://cdn.jsdelivr.net/npm/jsencrypt@3.1.0/bin/jsencrypt.min.js"></script>
+
+        <script src=
+"https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+    </script>
+ 
+    <link rel="stylesheet" href=
+"https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+        integrity=
+"sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
+        crossorigin="anonymous">
+        <script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+        <script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+        
+    </head>
+    <body>
+        
+        <style>
+            ::placeholder{
+                color: rgb(173, 170, 170);
+            }
+            body{
+              background-image: url('./background.jpg');
+              background-size: cover;
+              background-repeat: no-repeat;
+            }
+            #in{
+                width: 300px;
+            }
+            .name-box{
+                
+                margin-top: 300px;
+            }
+
+            #name{
+                height: 50px;
+                color: white;
+                outline: none;
+                width: 400px;
+                font-size: 30px;
+                background-color: rgba(0, 0, 0, .5);
+                border:  2 px solid white;
+            }
+            
+            #input{
+                height: 50px;
+                color: white;
+                outline: none;
+                width: 350px;
+                font-size: 30px;
+                background-color: rgba(0, 0, 0, .5);
+                border:  2px solid white;
+                display: none;           
+            }
+            #chat-button{
+                width: 200px;
+                height: 30px;
+                font-size: 15px;
+                margin-top: 20px;
+                background-color: aquamarine;
+            }
+            #btn{
+                 height: 50px;
+            }
+            .chat-hom{
+                display: none;
+                height: 80vh;
+                display: flex;
+    
+                justify-content: space-around;
+            }
+            #chat-box{
+                display: none;
+            }
+            #chat-box2{
+                display: none;
+            }
+            .chat-box{
+               background-color: rgba(0,0,0,.5);
+               width: 500px;
+               height: 400px;
+               color: white;
+               align-items: center;
+               display: flex;
+               flex-direction: column;
+               border: 2px solid white;
+               margin-top: 50px;
+             
+            }
+            h1{
+                margin-top: 20px;
+            }
+            .chat-box2{
+                background-color: rgba(0,0,0,.5);
+                border: 2px solid white;
+                margin-top: 50px;
+                color: white;
+                width: 500px;
+                height: 400px;
+                align-items: center;
+                display: flex;
+                flex-direction: column;
+            }
+        </style>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/forge/0.10.0/forge.min.js"></script>
+        <script >   
+       const rsaB = new JSEncrypt();
+       const rsaA = new JSEncrypt();
+       var arr=[]
+       arr[0]="Name"
+       const BpublicKey = `MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsJS6Y/frUGX0kpoHAQXG
+Y1WizmsJPswMtMhp8Nip4AbBjqhAk/BKzkmTQk698gspYa1X2yqP3YVsalaWiqto
+F4zyO/MPzJUIZ+ZHeb4XI6N7aBi2w7WN3gLX2RIod68fvsRmkvZLVY3g3lWIWyzi
+8B0CZpiaKt1HRN0Y41hn0JM3UTN4xnWA5fAa8ydaThjOBK1ehIeykyox97fyOcz9
+oOxNLu+veSxbmTJ4s9I8GX+SfK7bemESlE6HL50cJzTiRJ1qCYXw6etJHslvuI/d
+vyTrbbfNX9ioQ3PEetCHUrQo8ILyqGNu+hDMgiZFbjUeGqRuMIkGnOY+rjfg1dlq
+1QIDAQAB`;
+const BprivateKey = `MIIEowIBAAKCAQEAsJS6Y/frUGX0kpoHAQXGY1WizmsJPswMtMhp8Nip4AbBjqhA
+k/BKzkmTQk698gspYa1X2yqP3YVsalaWiqtoF4zyO/MPzJUIZ+ZHeb4XI6N7aBi2
+w7WN3gLX2RIod68fvsRmkvZLVY3g3lWIWyzi8B0CZpiaKt1HRN0Y41hn0JM3UTN4
+xnWA5fAa8ydaThjOBK1ehIeykyox97fyOcz9oOxNLu+veSxbmTJ4s9I8GX+SfK7b
+emESlE6HL50cJzTiRJ1qCYXw6etJHslvuI/dvyTrbbfNX9ioQ3PEetCHUrQo8ILy
+qGNu+hDMgiZFbjUeGqRuMIkGnOY+rjfg1dlq1QIDAQABAoIBAEe+5kyf+thb1JeM
+RbRAqG7L6K5+Bu+g8LizhXf6UGtZ02MnMbXqODrA4jhazgp+Rn4NdFj0XiffgkFi
+lSAarNyExBdfltfE5flxMzFf7v7n+cg94mR6a/38ob7tBcw7N2bHXfXwZIOKdgdg
+MVr6TerJnqQY9OrdpYtxWh9lWCkCOpfMYfcc1sMZNTVWgVmsBozpiy8YilrsAXTq
+yvVJjG34eTYKXzChYUwY/1AojWoO3lWXZ7wG5BUX9zfBTutfVFRkqDugOcq638+Q
+c1Fnl6q0/SPgfsw5rvalwra/L+AHbnEXJWzsLl9SSPle1I8qKCkuK90AFZmVxjrU
+SWiqNLECgYEA44Lbr3qEYXTgp0sBgiLGftaWNCz/eIGfUqsY78qWxpVdE1GjFjil
+0VK0+HzQWklp2jwyE7OyePF1xte/OvcJNsa4SWI+ZMQpi8J4+ExpxMKLij1P9yYw
+By/p7p9RQAe6lar+bmvt5yZiqSuxYuJnDjb0oK3LMa96Skuc94BAk18CgYEAxrE9
+431oUVHB9eHLt3rpZlwfAmsviK1hh1eUILLGD798PJvtrZD4MmPFfuVxqGlnvfo2
+RzlU9W4flXe90f3ZTO6FwFGsLCwEyDhbDXWBCQFmWa6QMI0GsyW4laGkNZKCYIsb
+eDzAVXRhanvz7JozIVrM3YQqNqp56nUxilbogksCgYAWelhQJw+rPUvw22VDwUHR
+SExAzW1UL6JZHZRyJJbu+dTfUsKFMIWZf81ne5VuRjCSIj5kWe25K0oSokA/iCa9
+5bZRccZuWD8uksE27v3INdxphRNAfOJj42T+cXkqlVjm7qUCreEsZEt9IVb+SRYb
+fmx+74zS1N6FNqFEhsRaiwKBgQCvezB2r3ang3azi6VZOhPTFH9KqpHDu6VMXDv2
+GQ42MF8wRGLJDSU3k8iEh243WEiIj+jKRMdVL9pzLtsWEIWPnYXBUiCmroXWs3cv
+Tt0UsAjOIg804gjNxf3dIXKe4fOGArXTHoybrHqxCiJnj9Sim8gdyDFkMHIWcUS8
+sn8NOwKBgDNojSuBoNOWoczbgSBy+o7dZNJWCduhE7vRzsRAHhSG1xhyE8LYjFBz
+Xb8cxoSSkzVRXN5BdZAVDFdQwpDvucUZ9yxvstIMRPLMXp5lx/tgMwN9q4sKq6da
+CN7AcgenBy3ak26wQoKi8BF+L9d3aGpnJAyJRffdoNi13/c6UgWu`;
+
+const ApublicKey=`MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5G3DR38A2hAp7Lg7opyU
+0DavkcGKJo5wjcwTgiD+5wtjrE0kjMG5lS9Hepohoh9QiBsqhogxhgWo/XMCZdxd
+tGvgS2KJ5Qas/RLqB5tIKWiulsJYBF2Fv1asKefep5WdJiu9iuKwHr8AzrISYb6p
+PixInTBM29l633I+YcIIqEE5UMXpzWRx2D08Bmx81yjaljrzD+dzpwwGR6aNPBJf
+978jHnioxUXFV4ONBrd7wq7YUDJS0us91I/VB41O/YXMRJYBprggco4svytuZV0P
+ycn0FNMVkdTMjOqrQj8RNY5KJLz4OgmypQltH+aeOsMgog+ugz7WL+V0j1mt2Eec
+oQIDAQAB`
+
+const AprivateKey=`MIIEowIBAAKCAQEA5G3DR38A2hAp7Lg7opyU0DavkcGKJo5wjcwTgiD+5wtjrE0k
+jMG5lS9Hepohoh9QiBsqhogxhgWo/XMCZdxdtGvgS2KJ5Qas/RLqB5tIKWiulsJY
+BF2Fv1asKefep5WdJiu9iuKwHr8AzrISYb6pPixInTBM29l633I+YcIIqEE5UMXp
+zWRx2D08Bmx81yjaljrzD+dzpwwGR6aNPBJf978jHnioxUXFV4ONBrd7wq7YUDJS
+0us91I/VB41O/YXMRJYBprggco4svytuZV0Pycn0FNMVkdTMjOqrQj8RNY5KJLz4
+OgmypQltH+aeOsMgog+ugz7WL+V0j1mt2EecoQIDAQABAoIBACtc7tousOG0edD3
+NFLtOI7CItgfjnM9TP6OBBIK43jGv7gguNSDnhBE9mO+yK23FhmQVqVNS2Fux6K9
+Z3IgwCUU6XJGFXlFqCcupQCmqK87sRDrebvyaQZmlK4r1yenDjsFyKiJ2fcsOSID
+yduGTyh/TZWRarW9dkbesBrss6oEw92876sFw/4prjnQ+Cgu+pCJHKZTvjpR15wJ
+U5qNiop3aJMkMCEycXolSwwh6yLV1zoENzX3nNyEHdhAeYm/Bvx3hIfdfw/A5/2j
+6t2ASLdh91VuPkuSA90m4GMpwioPCVQ1XAMy+Jo6RafAvnhxhMvfMA5PRflMQdlY
+SK814HUCgYEA+DImO2kmT+q84DMyh5mRYAYjcAYW8Ioad8+rOn9GPq66FkrluQC7
+2u21iHuzkBiYciDU1qUIHkpOR8wuG4QdUS3WZoDXnH/mc9/P0y00pQoRoSnUkUN3
+ubnpaHfsRDU1w4WjwlGnSbL13Ff1iQ/qNmojnYAx6Ga1Ir5nLni10TMCgYEA65x/
+gsTX57Ip5/x6wYGtulIexZNik+cXgI+gTCJ8jm0Xq+rfRatXLd+iVBsjYKE9ZDuu
+iJ/onu4t1NUt5xEck8q0o3QHQ37D9ZBSr5+OCv1lbKwehReE5uN+F1noWTz7gmCn
+P/qi/Cu8ccVR+cvCulPTNfVMV3qUUkbvCjz3wtsCgYEAkJWWVBHDMdcLRIhOrVO2
+rnuk9UN25ZVuKdGebCtsnmNnIEltXcKhrL3BfMqjJhRN6l5Z3tiwzAR5abX2Pi1O
+btYHChuQfyi69VGyXdD91A7zijE2FZF6E4XMBQGnb2yX71jQtwieLX7FXyEWdkwB
+IsXeDYh6imoapyzIKvhC4qUCgYAoMW5fNI1QbUhQ1vVqBWFJo7C0K8xpRsbvm5DQ
+7CEretjK7ypfjDc3ECt1BZwnY9pBOx0vGXhphGA1KpjGDlk9rRrbt3N1xC5Ruekh
+JKrqnQesXkBmm/iEGtLr0N6eOpT9TNe7Rlp/gkaHcg3l+yig+KPTVKFNWw/qaUdm
+C7iIeQKBgE3EZDA8LVmXdB8BzI+aLV1QlfAo/uNHifgKBs0gJTYqFlIGp66Slunf
+T9yS5cZFP3tsFB0mEeDTWRXTe+XufTQBZRpKSjnAcr8qAoCc1Ztin6MhFyhOmIb0
+23eHXKI2o8deIHV+NAPbZyb2pLUlINDvgVQWK7FXPHTgHXUXFsX3`
+rsaA.setPublicKey(ApublicKey);
+rsaA.setPrivateKey(AprivateKey);
+rsaB.setPublicKey(BpublicKey)
+rsaB.setPrivateKey(BprivateKey)
+function encryptA(plaintext) {
+    const encrypted = rsaA.encrypt(plaintext);
+      return encrypted;
+}
+function encryptB(plaintext) {
+    const encrypted = rsaB.encrypt(plaintext);
+      return encrypted;
+}
+
+function decryptA(encrypted) {
+    const decrypted = rsaA.decrypt(encrypted);
+    return decrypted;
+}
+function decryptB(encrypted) {
+    const decrypted = rsaB.decrypt(encrypted);
+    return decrypted;
+}
+
+
+        const firebaseConfig = {
+              apiKey: "AIzaSyARU5d-pa3HczZyMjf9EFRnjYiliPjI83s",
+              authDomain: "health-care-50d70.firebaseapp.com",
+              databaseURL: "https://health-care-50d70-default-rtdb.firebaseio.com",
+              projectId: "health-care-50d70",
+              storageBucket: "health-care-50d70.appspot.com",
+              messagingSenderId: "929719561432",
+              appId: "1:929719561432:web:ecbd3849a6676331d47bad",
+              measurementId: "G-EFS41K4MPL"
+        };
+         firebase.initializeApp(firebaseConfig);
+        //  var public=firebase.database().ref('Chat');
+        
+       
+        function Username(){
+                
+                 var username=document.getElementById('name').value
+               
+                 if(username=="Bernee"){
+                  
+                    arr[0]=username
+                 document.getElementById('chat-usr').innerHTML="You"
+                 document.getElementById('chat-usr2').innerHTML="Friend:"+"Abirami"
+                 document.getElementById('name-box').style.display='none'
+                 document.getElementById('chat-box').style.display='block'
+                 document.getElementById('chat-box2').style.display='block'
+                 document.getElementById('input').style.display='flex'
+                 }
+                 else if(username=="Abirami"){
+                  
+                    arr[0]=username
+                 document.getElementById('chat-usr').innerHTML="You"
+                 document.getElementById('chat-usr2').innerHTML="Friend:"+"Bernee"
+                 document.getElementById('name-box').style.display='none'
+                 document.getElementById('chat-box').style.display='block'
+                 document.getElementById('chat-box2').style.display='block'
+                 document.getElementById('input').style.display='flex'
+
+                 }
+                 else{
+                    alert('wrong user')
+                 }
+            }
+        function Sent(){
+         var name=document.getElementById("sms").value
+         var messagesRef = firebase.database().ref('Chat');
+         if(arr[0]=="Bernee"){
+         messagesRef.child("Bernee").set({
+                 User1:encryptA(name),
+         })
+
+        messagesRef.child("Bernee").child("User1").once("value").then((snapshot) => {
+            const data = decryptA(snapshot.val());
+           
+            document.getElementById("message").innerHTML=data;
+            }).catch((error) => {
+            console.error("Error fetching data:", error);
+            });
+        }
+        if(arr[0]=="Abirami"){
+         messagesRef.child("Abirami").set({
+                 User1:encryptB(name),
+         })
+        }
+        messagesRef.child("Abirami").child("User1").once("value").then((snapshot) => {
+            const data = decryptB(snapshot.val());
+           
+            document.getElementById("message").innerHTML=data;
+            }).catch((error) => {
+            console.error("Error fetching data:", error);
+            });
+        }
+        
+        const intervalId = setInterval(function() {
+            
+            if(arr[0]=="Bernee"){
+            var messagesRef = firebase.database().ref('Chat');
+            messagesRef.child(arr[0]).child("User1").once("value").then((snapshot) => {
+            const data = decryptA(snapshot.val());
+          
+            document.getElementById("message").innerHTML=data;
+            }).catch((error) => {
+            console.error("Error fetching data:", error);
+            });
+            }
+            if(arr[0]=="Abirami"){
+                var messagesRef = firebase.database().ref('Chat');
+            messagesRef.child(arr[0]).child("User1").once("value").then((snapshot) => {
+            const data = decryptB(snapshot.val());
+          
+            document.getElementById("message").innerHTML=data;
+            }).catch((error) => {
+            console.error("Error fetching data:", error);
+            });  
+            }
+            
+
+        }, 10);
+
+        const ntervalId = setInterval(function() {
+            if(arr[0]=="Abirami"){
+                arr[1]="Bernee"
+                var messagesRef = firebase.database().ref('Chat');
+                messagesRef.child(arr[1]).child("User1").once("value").then((snapshot) => {
+                const data = decryptA(snapshot.val());
+            
+                document.getElementById("message2").innerHTML=data;
+                }).catch((error) => {
+                console.error("Error fetching data:", error);
+            });
+        
+            }
+            if(arr[0]=="Bernee"){
+                arr[1]="Abirami"
+                var messagesRef = firebase.database().ref('Chat');
+                messagesRef.child(arr[1]).child("User1").once("value").then((snapshot) => {
+                const data = decryptB(snapshot.val());
+            
+                document.getElementById("message2").innerHTML=data;
+                }).catch((error) => {
+                console.error("Error fetching data:", error);
+            });
+            }
+            
+            
+        }, 10);
+        </script>
+        <center>
+        <div class="name-box" id="name-box">
+             <input  type="text" placeholder=" Enter you name" id="name"><br>
+             <button id="chat-button" onclick="Username()">Chat</button>
+        </div></center>
+        <div class="chat-hom">
+        <center><div class="chat-box" id="chat-box">
+            
+            <h1 id="chat-usr">You</h1>
+            <h1 id="message">Hi</h1>
+            
+
+        </div>
+    </center>
+        <center> <div class="chat-box2" id="chat-box2">
+            
+            <h1 id="chat-usr2">You</h1>
+            <h1 id="message2">Hi</h1>
+            </div>
+    </center>
+    </div>
+<center><div id="input" ><input type="text" placeholder="Enter a Message" onfocus="this.value=''" id="sms"><button id="btn" onclick="Sent()">▶</button>
+</div></center> 
+    </body>
+
+</html>
